@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Error - Customer Call Transcript Analyzer{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h2 class="card-title mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Error Occurred
+                </h2>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger d-flex align-items-start">
+                    <i class="fas fa-times-circle me-3 mt-1"></i>
+                    <div>
+                        <h5 class="alert-heading">Something went wrong!</h5>
+                        <p class="mb-0">{{ error }}</p>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h6>Common solutions:</h6>
+                    <ul>
+                        <li>Make sure your transcript is at least 10 characters long</li>
+                        <li>Check your internet connection</li>
+                        <li>Try with a shorter transcript (maximum 10,000 characters)</li>
+                        <li>If the problem persists, please contact support</li>
+                    </ul>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <a href="/" class="btn btn-primary me-2">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Go Back Home
+                    </a>
+                    <button class="btn btn-outline-secondary" onclick="window.history.back()">
+                        <i class="fas fa-undo me-2"></i>
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

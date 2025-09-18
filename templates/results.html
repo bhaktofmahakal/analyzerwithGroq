@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Results - Customer Call Transcript Analyzer{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <!-- Success Alert -->
+        <div class="alert alert-success d-flex align-items-center mb-4" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <div>
+                <strong>Analysis Complete!</strong> Your transcript has been analyzed and saved to CSV.
+            </div>
+        </div>
+
+        <!-- Results Display -->
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h2 class="card-title mb-0">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Analysis Results
+                </h2>
+                <small>Analyzed on {{ data.timestamp }}</small>
+            </div>
+            <div class="card-body">
+                <!-- Original Transcript -->
+                <div class="mb-4">
+                    <h5 class="text-primary">
+                        <i class="fas fa-file-text me-2"></i>
+                        Original Transcript
+                    </h5>
+                    <div class="bg-light p-3 rounded border-start border-primary border-4">
+                        <p class="mb-0">{{ data.transcript }}</p>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div class="mb-4">
+                    <h5 class="text-info">
+                        <i class="fas fa-compress-alt me-2"></i>
+                        Summary
+                    </h5>
+                    <div class="bg-light p-3 rounded border-start border-info border-4">
+                        <p class="mb-0">{{ data.summary }}</p>
+                    </div>
+                </div>
+
+                <!-- Sentiment -->
+                <div class="mb-4">
+                    <h5 class="text-warning">
+                        <i class="fas fa-heart me-2"></i>
+                        Customer Sentiment
+                    </h5>
+                    <div class="bg-light p-3 rounded border-start border-warning border-4">
+                        <h4 class="mb-0">
+                            <span class="sentiment-value sentiment-{{ data.sentiment.lower() }}">
+                                {% if data.sentiment.lower() == 'positive' %}
+                                    <i class="fas fa-smile me-2"></i>
+                                {% elif data.sentiment.lower() == 'negative' %}
+                                    <i class="fas fa-frown me-2"></i>
+                                {% else %}
+                                    <i class="fas fa-meh me-2"></i>
+                                {% endif %}
+                                {{ data.sentiment }}
+                            </span>
+                        </h4>
+                    </div>
+                </div>
+
+                <!-- CSV Information -->
+                <div class="alert alert-info">
+                    <i class="fas fa-table me-2"></i>
+                    <strong>Data Saved:</strong> This analysis has been automatically saved to 
+                    <code>call_analysis.csv</code> in the application directory.
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="mt-4 text-center">
+            <a href="/" class="btn btn-primary me-2">
+                <i class="fas fa-plus me-2"></i>
+                Analyze Another Transcript
+            </a>
+            <a href="/results" class="btn btn-outline-secondary me-2">
+                <i class="fas fa-list me-2"></i>
+                View All Results
+            </a>
+            <button class="btn btn-outline-info" onclick="window.print()">
+                <i class="fas fa-print me-2"></i>
+                Print Results
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Print Styles -->
+<style>
+    @media print {
+        .navbar, .btn, .alert-info:last-child, .mt-4:last-child {
+            display: none !important;
+        }
+        .card {
+            border: 1px solid #000 !important;
+            box-shadow: none !important;
+        }
+        body {
+            background: white !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Apply sentiment styling on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const sentimentElement = document.querySelector('.sentiment-value');
+        if (sentimentElement) {
+            const sentiment = "{{ data.sentiment }}".toLowerCase();
+            formatSentiment(sentiment);
+        }
+    });
+</script>
+{% endblock %}

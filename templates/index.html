@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Customer Call Transcript Analyzer{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title mb-0">
+                    <i class="fas fa-microphone me-2"></i>
+                    Analyze Customer Call Transcript
+                </h2>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-4">
+                    Upload a customer call transcript to get an AI-powered summary and sentiment analysis.
+                    Our system uses advanced language models to understand customer concerns and emotions.
+                </p>
+                
+                <form action="/analyze-form" method="post" onsubmit="showLoading(document.getElementById('analyzeBtn'))">
+                    <div class="mb-3">
+                        <label for="transcript" class="form-label">
+                            <i class="fas fa-file-text me-1"></i>
+                            Customer Call Transcript *
+                        </label>
+                        <textarea 
+                            class="form-control" 
+                            id="transcript" 
+                            name="transcript" 
+                            rows="8" 
+                            placeholder="Paste your customer call transcript here... (minimum 10 characters)"
+                            required
+                            minlength="10"
+                            maxlength="10000"
+                        ></textarea>
+                        <div class="form-text">
+                            <small>Enter at least 10 characters. Maximum 10,000 characters.</small>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" id="analyzeBtn" class="btn btn-primary btn-lg">
+                            <span class="loading spinner-border spinner-border-sm me-2" role="status"></span>
+                            <span class="button-text">
+                                <i class="fas fa-brain me-2"></i>
+                                Analyze Transcript
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Sample Transcript Examples -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Sample Transcripts
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="accordion" id="examplesAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="example1">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+                                Example 1: Payment Issue (Negative Sentiment)
+                            </button>
+                        </h2>
+                        <div id="collapse1" class="accordion-collapse collapse" data-bs-parent="#examplesAccordion">
+                            <div class="accordion-body">
+                                <p><strong>Sample Transcript:</strong></p>
+                                <div class="bg-light p-3 rounded">
+                                    <em>"Hi, I was trying to book a slot yesterday but the payment failed multiple times. I tried three different cards and none of them worked. Your system kept showing errors and now I'm really frustrated because I missed the appointment I needed. This is the third time this month your payment system has failed me. I need this fixed immediately or I'm switching to your competitor."</em>
+                                </div>
+                                <button class="btn btn-sm btn-outline-primary mt-2" onclick="fillExample(1)">
+                                    Use This Example
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="example2">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+                                Example 2: Successful Resolution (Positive Sentiment)
+                            </button>
+                        </h2>
+                        <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#examplesAccordion">
+                            <div class="accordion-body">
+                                <p><strong>Sample Transcript:</strong></p>
+                                <div class="bg-light p-3 rounded">
+                                    <em>"Hello, I called about a billing issue last week and wanted to follow up. Sarah from your team was incredibly helpful and resolved everything perfectly. She explained the charges clearly and even provided me with a detailed breakdown. The refund was processed quickly and I received it today. Thank you so much for the excellent customer service. I'm very satisfied with how this was handled."</em>
+                                </div>
+                                <button class="btn btn-sm btn-outline-primary mt-2" onclick="fillExample(2)">
+                                    Use This Example
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="example3">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+                                Example 3: General Inquiry (Neutral Sentiment)
+                            </button>
+                        </h2>
+                        <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#examplesAccordion">
+                            <div class="accordion-body">
+                                <p><strong>Sample Transcript:</strong></p>
+                                <div class="bg-light p-3 rounded">
+                                    <em>"Hi, I'm calling to inquire about your premium subscription plans. Could you please explain the differences between the basic and premium tiers? I'm specifically interested in knowing about the storage limits and the number of users allowed. Also, do you offer any annual discount plans? I'm evaluating different options for my small business."</em>
+                                </div>
+                                <button class="btn btn-sm btn-outline-primary mt-2" onclick="fillExample(3)">
+                                    Use This Example
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const examples = {
+        1: "Hi, I was trying to book a slot yesterday but the payment failed multiple times. I tried three different cards and none of them worked. Your system kept showing errors and now I'm really frustrated because I missed the appointment I needed. This is the third time this month your payment system has failed me. I need this fixed immediately or I'm switching to your competitor.",
+        2: "Hello, I called about a billing issue last week and wanted to follow up. Sarah from your team was incredibly helpful and resolved everything perfectly. She explained the charges clearly and even provided me with a detailed breakdown. The refund was processed quickly and I received it today. Thank you so much for the excellent customer service. I'm very satisfied with how this was handled.",
+        3: "Hi, I'm calling to inquire about your premium subscription plans. Could you please explain the differences between the basic and premium tiers? I'm specifically interested in knowing about the storage limits and the number of users allowed. Also, do you offer any annual discount plans? I'm evaluating different options for my small business."
+    };
+
+    function fillExample(exampleNumber) {
+        document.getElementById('transcript').value = examples[exampleNumber];
+        // Collapse all accordions
+        const collapses = document.querySelectorAll('.accordion-collapse');
+        collapses.forEach(collapse => {
+            if (collapse.classList.contains('show')) {
+                bootstrap.Collapse.getInstance(collapse).hide();
+            }
+        });
+        // Scroll to form
+        document.getElementById('transcript').focus();
+    }
+</script>
+{% endblock %}
