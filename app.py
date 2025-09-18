@@ -21,7 +21,7 @@ from groq import AsyncGroq
 from pydantic import BaseModel, Field, field_validator
 from dotenv import load_dotenv
 
-# Load environment variables
+# Load env
 load_dotenv()
 
 # Configure logging
@@ -36,11 +36,11 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Configuration
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "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")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "g******************************************")  #use you real key 
 CSV_OUTPUT_FILE = "call_analysis.csv"
 GROQ_MODEL = "llama-3.1-8b-instant"
 
-# Ensure directories exist
+
 Path("static").mkdir(exist_ok=True)
 Path("templates").mkdir(exist_ok=True)
 
@@ -69,7 +69,7 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Mount static files and templates
+# templates
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
@@ -111,10 +111,10 @@ class TranscriptAnalyzer:
         Analyze transcript for summary and sentiment
         """
         try:
-            # Get summary
+            #summary
             summary = await self._get_summary(transcript)
             
-            # Get sentiment
+            #sentiment
             sentiment = await self._get_sentiment(transcript)
             
             return {
@@ -183,7 +183,7 @@ class TranscriptAnalyzer:
             if sentiment.lower() in ['positive', 'neutral', 'negative']:
                 return sentiment.capitalize()
             else:
-                # Fallback if API doesn't return expected format
+              
                 return "Neutral"
                 
         except Exception as e:
@@ -203,7 +203,7 @@ class CSVManager:
                 fieldnames = ['Timestamp', 'Transcript', 'Summary', 'Sentiment']
                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                 
-                # Write header if file is new
+               
                 if not file_exists:
                     writer.writeheader()
                 
@@ -233,7 +233,7 @@ class CSVManager:
             logger.error(f"Error reading CSV: {e}")
             return None
 
-# Initialize analyzer (will be set in lifespan)
+# Initialize analyzer
 analyzer = None
 
 # Routes
@@ -246,12 +246,6 @@ async def home(request: Request):
 async def analyze_transcript_api(request: TranscriptRequest):
     """
     API endpoint to analyze customer call transcript
-    
-    Args:
-        request: TranscriptRequest containing the transcript
-        
-    Returns:
-        AnalysisResponse with summary and sentiment
     """
     global analyzer
     
@@ -259,7 +253,7 @@ async def analyze_transcript_api(request: TranscriptRequest):
         analyzer = TranscriptAnalyzer(groq_client)
     
     try:
-        # Analyze transcript
+        # Analyze 
         result = await analyzer.analyze_transcript(request.transcript)
         
         # Prepare response data
@@ -291,12 +285,6 @@ async def analyze_transcript_api(request: TranscriptRequest):
 async def analyze_transcript_form(request: Request, transcript: str = Form(...)):
     """
     Form-based endpoint for web interface
-    
-    Args:
-        transcript: The customer call transcript from form
-        
-    Returns:
-        HTML response with results
     """
     global analyzer
     
@@ -308,10 +296,10 @@ async def analyze_transcript_form(request: Request, transcript: str = Form(...))
         if len(transcript.strip()) < 10:
             raise ValueError("Transcript must be at least 10 characters long")
         
-        # Analyze transcript
+      
         result = await analyzer.analyze_transcript(transcript)
         
-        # Prepare response data
+        # Prepare response 
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         response_data = {
             "transcript": transcript,
@@ -323,7 +311,7 @@ async def analyze_transcript_form(request: Request, transcript: str = Form(...))
         # Save to CSV
         CSVManager.save_to_csv(response_data)
         
-        # Return results page
+        # Return results 
         return templates.TemplateResponse("results.html", {
             "request": request,
             "data": response_data
@@ -342,7 +330,7 @@ async def view_results(request: Request):
     try:
         df = CSVManager.read_csv()
         if df is not None and not df.empty:
-            # Convert DataFrame to list of dictionaries
+            
             results = df.to_dict('records')
             return templates.TemplateResponse("all_results.html", {
                 "request": request,
@@ -361,7 +349,7 @@ async def view_results(request: Request):
             "error": f"Failed to load results: {str(e)}"
         })
 
-@app.get("/health")
+@app.get("/health")      #health
 async def health_check():
     """Health check endpoint"""
     return {"status": "healthy", "timestamp": datetime.now().isoformat()}
